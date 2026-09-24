@@ -1,0 +1,25 @@
+CyberShield production NLP — TF-IDF + LogisticRegression
+Corpus: original in-repo labeled texts (155 samples, 4 classes)
+Held-out split: 20% stratified (n=31)
+
+              precision    recall  f1-score   support
+
+        SAFE       0.67      0.80      0.73        10
+        SPAM       0.71      0.56      0.62         9
+        SCAM       1.00      1.00      1.00         5
+    PHISHING       1.00      1.00      1.00         7
+
+    accuracy                           0.81        31
+   macro avg       0.85      0.84      0.84        31
+weighted avg       0.81      0.81      0.80        31
+
+Confusion matrix (rows=true, cols=pred, order ['SAFE', 'SPAM', 'SCAM', 'PHISHING']):
+[[8 2 0 0]
+ [4 5 0 0]
+ [0 0 5 0]
+ [0 0 0 7]]
+
+5-fold CV accuracy: 0.923 ± 0.033
+
+Honest limits: trained on synthetic patterns for this project;
+not a substitute for a large-scale fine-tuned transformer.

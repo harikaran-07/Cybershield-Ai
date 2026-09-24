@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Minimum permissions only. Each is requested at point-of-use. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Allows the optional user-configured local backend (e.g. a PC on the
+         same Wi-Fi running the CyberShield backend + Ollama). The default
+         cloud backend is always HTTPS; this only affects user-entered
+         http:// addresses on trusted networks. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Battery-optimization opt-out is user-initiated only, for reliable
+         scheduled security checks on aggressive OEM skins (OnePlus/OxygenOS). -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- Camera is optional (QR scanning is opt-in) -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!--
+      Package visibility (Android 11+): without this declaration, Android silently
+      hides user-installed apps (WhatsApp, Instagram, Free Fire, …) from
+      getInstalledPackages() and the app-security scanner would only see a
+      semi-random subset of system packages.
+      QUERY_ALL_PACKAGES gives complete coverage — required for an honest
+      security inventory (hidden/launcher-less apps matter MOST in a scan).
+      Play distribution note: this permission is restricted on Play and needs a
+      policy declaration; for sideloaded builds it needs nothing special.
+    -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+
+    <application
+        android:name=".CyberShieldApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.CyberShield">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.CyberShield">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Share Intent: receive text shared from other apps (messages/URLs) -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <!-- Opt-in notification monitoring (user grants in Android Settings) -->
+        <service
+            android:name=".monitor.ShieldNotificationListener"
+            android:exported="true"
+            android:label="CyberShield notification monitoring"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

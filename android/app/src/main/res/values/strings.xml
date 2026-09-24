@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">CyberShield AI</string>
+    <string name="tagline">Your personal AI security guardian</string>
+    <string name="status_protected">Protected</string>
+    <string name="offline_mode">Offline protection mode</string>
+    <string name="ai_unavailable">AI explanation is temporarily unavailable. The security detection result is still available.</string>
+    <string name="backend_unreachable">Cannot reach the security backend. Showing offline protection results.</string>
+    <string name="cookie_unavailable">Cookie inspection is unavailable for this browser. CyberShield never bypasses browser security to read cookies.</string>
+    <string name="permission_disclaimer">A permission only increases privacy risk depending on how the application uses it. It does not prove an app is malware.</string>
+    <string name="file_static_note">Static analysis only — files are never executed or installed.</string>
+    <string name="url_never_visited">URLs are analyzed statically and never opened automatically.</string>
+    <string name="notifications_channel">Security alerts</string>
+    <string name="qr_external_url">QR contains an external URL.</string>
+    <string name="delete_history_confirm">Delete scan history? This cannot be undone.</string>
+    <string name="delete_all_confirm">Delete ALL local data? This cannot be undone.</string>
+</resources>
