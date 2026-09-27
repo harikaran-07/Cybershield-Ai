@@ -70,7 +70,6 @@ object TotalScanEngine {
         "Checking network indicators…",
         "Checking URL & QR verdicts…",
         "Checking scam message signals…",
-        "Checking AI media security…",
         "Correlating threats…",
         "Calculating security score…",
         "Recording scan history…"
@@ -257,33 +256,12 @@ object TotalScanEngine {
                 )
             }
 
-            // ---- Module: AI media security availability ------------------------
-            onPhase(PHASES[6])
-            runCatching {
-                val mediaEvents = recentEvents.filter { it.category == "MEDIA" }
-                val flagged = mediaEvents.count { it.classification != "SAFE" && it.riskScore >= 40 }
-                modules += ModuleResult(
-                    key = "media", label = "AI media security",
-                    available = true,
-                    checkedCount = mediaEvents.size,
-                    warnings = flagged, highRisk = mediaEvents.count { it.riskScore >= 75 },
-                    summary = when {
-                        mediaEvents.isEmpty() ->
-                            "No media analyzed yet — open AI Media Security to check a file"
-                        flagged > 0 ->
-                            "$flagged analyzed file(s) carry AI-generation/manipulation indicators"
-                        else -> "${mediaEvents.size} media analysis result(s) stored — no strong synthetic indicators"
-                    },
-                    route = "media_scan"
-                )
-            }
-
             // ---- Threat correlation (§3): transparent rules, real evidence ----
-            onPhase(PHASES[7])
+            onPhase(PHASES[6])
             val correlations = correlate(recentEvents)
 
             // ---- Security score: deterministic engine ONLY (§4) ----------------
-            onPhase(PHASES[8])
+            onPhase(PHASES[7])
             var score: Int? = null
             var band: String? = null
             var deltas: List<String> = emptyList()
@@ -315,7 +293,7 @@ object TotalScanEngine {
             }
 
             // ---- Scan history snapshot (§8): local Room, diffable -------------
-            onPhase(PHASES[9])
+            onPhase(PHASES[8])
             runCatching {
                 WhatChangedStore.record(
                     context = context,
@@ -386,9 +364,6 @@ object TotalScanEngine {
         val cases = mutableListOf<CorrelationCase>()
         val riskyUrls = events.filter { it.category == "URL" && it.riskScore >= 40 }
         val riskyMsgs = events.filter { (it.category == "MESSAGE") && it.riskScore >= 40 }
-        val suspiciousMedia = events.filter {
-            it.category == "MEDIA" && it.classification != "SAFE" && it.riskScore >= 40
-        }
         val riskyFiles = events.filter {
             (it.category == "FILE" || it.category == "APK") && it.riskScore >= 40
         }
@@ -403,18 +378,7 @@ object TotalScanEngine {
                 route = "alerts"
             )
         }
-        // Rule 2: a manipulated-media result combined with phishing links in the
-        // window (deepfake-assisted scam pattern — evidence-based, not assumed).
-        if (suspiciousMedia.isNotEmpty() && riskyUrls.isNotEmpty()) {
-            cases += CorrelationCase(
-                title = "Flagged media result combined with risky links",
-                severity = "HIGH",
-                evidence = (suspiciousMedia.take(2).map { "Media: ${it.summary}" } +
-                    riskyUrls.take(2).map { "URL: ${it.summary}" }),
-                route = "media_scan"
-            )
-        }
-        // Rule 3: risky file/APK together with risky link traffic.
+        // Rule 2: risky file/APK together with risky link traffic.
         if (riskyFiles.isNotEmpty() && (riskyUrls.isNotEmpty() || riskyMsgs.isNotEmpty())) {
             cases += CorrelationCase(
                 title = "Risky file scan combined with risky link activity",

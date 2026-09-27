@@ -9,24 +9,37 @@
          http:// addresses on trusted networks. -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Battery-optimization opt-out is user-initiated only, for reliable
-         scheduled security checks on aggressive OEM skins (OnePlus/OxygenOS). -->
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <!-- Camera is optional (QR scanning is opt-in) -->
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <!--
-      Package visibility (Android 11+): without this declaration, Android silently
-      hides user-installed apps (WhatsApp, Instagram, Free Fire, …) from
-      getInstalledPackages() and the app-security scanner would only see a
-      semi-random subset of system packages.
-      QUERY_ALL_PACKAGES gives complete coverage — required for an honest
-      security inventory (hidden/launcher-less apps matter MOST in a scan).
-      Play distribution note: this permission is restricted on Play and needs a
-      policy declaration; for sideloaded builds it needs nothing special.
+      Package visibility (Android 11+): the broad QUERY_ALL_PACKAGES permission
+      was REMOVED (sensitive/Play-restricted; enumerates every installed app).
+      The App Security Scanner now sees the privacy-preserving subset Android
+      allows without it: apps the user interacted with, apps with a launcher
+      icon, and apps exposing the intents declared below. The scanner reports
+      the partial coverage honestly in its UI instead of pretending a full
+      inventory. Sideloaded user-installed apps (WhatsApp, Instagram, …) are
+      still visible via the LAUNCHER/MAIN + interacted-apps filters.
     -->
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="text/plain" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="sms" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+        </intent>
+    </queries>
 
     <application
         android:name=".CyberShieldApplication"

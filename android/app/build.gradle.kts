@@ -15,8 +15,8 @@ android {
         applicationId = "com.cybershieldai"
         minSdk = 26
         targetSdk = 34
-        versionCode = 3
-        versionName = "2.2.0"
+        versionCode = 7
+        versionName = "2.3.3"
 
         // No cloud backend is compiled in: all detection runs on-device.
         // Users may point the app at a server THEY run (e.g. a PC with a

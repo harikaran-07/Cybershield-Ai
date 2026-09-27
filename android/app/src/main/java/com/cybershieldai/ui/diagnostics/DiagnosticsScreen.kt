@@ -92,8 +92,6 @@ fun DiagnosticsScreen(navController: NavHostController) {
                 "ERROR" -> "Last background check failed"
                 else -> "Constrained by Android (battery/background rules)"
             }
-            val mediaEngineReady = com.cybershieldai.ai.AiModelManager.isInstalled(context)
-
             @Composable
             fun statusLine(label: String, state: String, detail: String = "") {
                 val color = when {
@@ -148,13 +146,6 @@ fun DiagnosticsScreen(navController: NavHostController) {
                     "Scan Channel",
                     mgr.channelState(context, mgr.CH_SCAN),
                     "Scan and auto-check results")
-                statusLine(
-                    "AI Media Engine",
-                    if (mediaEngineReady) "READY" else "OPTIONAL",
-                    if (mediaEngineReady)
-                        "Local model installed — explanations available for media analysis"
-                    else
-                        "Optional: install the local model for AI explanations of results")
                 statusLine(
                     "Background Processing",
                     bgState, bgDetail)

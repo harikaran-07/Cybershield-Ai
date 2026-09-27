@@ -222,26 +222,37 @@ object ScannerAiAnalyzer {
      * Null = explanation unavailable; the engine result stands unchanged.
      */
     suspend fun explain(context: Context, finalResultJson: String): String? =
-        withContext(Dispatchers.IO) {
-            when (val handle = readyModel(context)) {
-                is ModelHandle.Skip -> {
-                    Log.i(TAG, "explain unavailable: ${handle.reason}")
-                    null
+        explainWithPrompt(context, finalResultJson, EXPLAIN_PROMPT)
+
+    /**
+     * Shared explanation stage for every CyberShield detector (URL, media,
+     * AI-voice). The caller passes the FINAL structured result plus its own
+     * system prompt; the LLM only narrates. Null = explanation unavailable.
+     */
+    suspend fun explainWithPrompt(
+        context: Context,
+        finalResultJson: String,
+        systemPrompt: String
+    ): String? = withContext(Dispatchers.IO) {
+        when (val handle = readyModel(context)) {
+            is ModelHandle.Skip -> {
+                Log.i(TAG, "explain unavailable: ${handle.reason}")
+                null
+            }
+            ModelHandle.Ready -> {
+                val prompt = buildString {
+                    append(systemPrompt)
+                    append("\n\nFinal security engine result (do not change):\n")
+                    append(finalResultJson.take(1400))
+                    append("\n\nAssistant:")
                 }
-                ModelHandle.Ready -> {
-                    val prompt = buildString {
-                        append(EXPLAIN_PROMPT)
-                        append("\n\nFinal security engine result (do not change):\n")
-                        append(finalResultJson.take(1400))
-                        append("\n\nAssistant:")
-                    }
-                    val text = inferProse(prompt)
-                    disarm(context) // the process survived — reset the watchdog
-                    if (text != null) cachedEngine = Engine.LOCAL_READY
-                    text
-                }
+                val text = inferProse(prompt)
+                disarm(context) // the process survived — reset the watchdog
+                if (text != null) cachedEngine = Engine.LOCAL_READY
+                text
             }
         }
+    }
 
     /** One serialized, time-boxed PROSE generation (no JSON contract). */
     private suspend fun inferProse(prompt: String): String? = try {

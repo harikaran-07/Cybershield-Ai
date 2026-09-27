@@ -85,7 +85,6 @@ fun ReportsScreen(navController: NavHostController) {
             Text("CYBERSHIELD SECURITY REPORT", style = CS.CardTitle, color = TextPrimary)
             Spacer(Modifier.height(Dsn.S))
             ReportRow("Protection Score", score?.let { "$it/100" } ?: "Not scanned yet")
-            ReportRow("AI Media Security", "Voice · Image · Video analysis available")
             ReportRow("App Security", if (appsChecked > 0) "$appsChecked apps reviewed" else "Not scanned yet")
             ReportRow("Suspicious Events (24h)", "$suspiciousEvents")
             ReportRow(
@@ -99,7 +98,7 @@ fun ReportsScreen(navController: NavHostController) {
         if (reports.isEmpty()) {
             SectionCard {
                 Text("No reports yet", style = CS.CardTitle, color = TextPrimary)
-                Text("Report a scam call, SMS, URL or app from Home → REPORT SCAM. Reports are stored on this device only.",
+                Text("No locally-stored reports on this device.",
                     style = CS.BodyMedium, color = TextSecondary)
             }
         } else {

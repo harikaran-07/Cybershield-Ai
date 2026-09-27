@@ -135,9 +135,6 @@ fun ScannersScreen(navController: NavHostController) {
         }
 
         // ---------------- Other real scanners ----------------
-        ScannerLink(Icons.Filled.GraphicEq, "Media Scanner",
-            "Check audio, images and videos for AI-generation signals") {
-            navController.navigate("media_scan") }
         ScannerLink(Icons.Filled.Sms, "SMS Scam Scanner",
             "Analyze any message text for scam patterns") {
             navController.navigate("scan") }
@@ -148,7 +145,7 @@ fun ScannersScreen(navController: NavHostController) {
             "Installed-app risk analysis from package metadata") {
             navController.navigate("protection") }
         ScannerLink(Icons.Filled.AdminPanelSettings, "Permission Scanner",
-            "Sensitive permission grants across installed apps") {
+            "App inventory and permission guidance") {
             navController.navigate("protection") }
     }
 }

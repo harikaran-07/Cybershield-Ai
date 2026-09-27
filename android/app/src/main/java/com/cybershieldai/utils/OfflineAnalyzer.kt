@@ -108,10 +108,15 @@ object OfflineAnalyzer {
             type = "SMS", riskScore = score, severity = severityFor(score),
             classification = classification,
             indicators = indicators.ifEmpty { listOf("No obvious scam indicators found offline") },
-            recommendation = if (score >= 40)
-                "Do not open links or reply. Verify via the organization's official app or website."
-            else
-                "Offline check found no obvious scam signs. Analysis completed entirely on this device."
+            recommendation = when {
+                score >= 40 ->
+                    "Do not open links or reply. Verify via the organization's official app or website."
+                indicators.isNotEmpty() ->
+                    "Some general risk signals were found, but nothing clearly indicating a " +
+                        "scam. Stay cautious with links and never share OTPs or passwords."
+                else ->
+                    "Offline check found no obvious scam signs. Analysis completed entirely on this device."
+            }
         )
     }
 

@@ -28,7 +28,6 @@ import com.cybershieldai.ui.threat.ThreatAlertScreen
 import com.cybershieldai.ui.incidents.IncidentScreen
 import com.cybershieldai.ui.network.NetworkScreen
 import com.cybershieldai.ui.privacy.PrivacyScreen
-import com.cybershieldai.ui.report.ReportScreen
 import com.cybershieldai.ui.scan.ScanScreen
 import com.cybershieldai.ui.apps.AppDetailScreen
 import com.cybershieldai.ui.settings.ProtectionSetupScreen
@@ -50,9 +49,11 @@ fun CyberShieldApp(initialSharedText: String? = null, startScreen: String? = nul
                     val id = screen.removePrefix("threat:").toLongOrNull() ?: -1L
                     if (id > 0) navController.navigate("threat/$id") { launchSingleTop = true }
                 }
-                // "scam" screen was removed with Scam Protection; route legacy
-                // deep links to Alerts so stale notifications cannot crash nav.
+                // "scam"/"report" screens were removed (Scam Protection / Report
+                // Scam); route legacy deep links to a live screen so stale
+                // notifications cannot crash navigation.
                 screen == "scam" -> navController.navigate("alerts") { launchSingleTop = true }
+                screen == "report" -> navController.navigate("reports") { launchSingleTop = true }
                 else -> navController.navigate(screen) { launchSingleTop = true }
             }
         }
@@ -125,21 +126,6 @@ fun CyberShieldApp(initialSharedText: String? = null, startScreen: String? = nul
                     entry.arguments?.getLong("eventId") ?: -1L)
             }
 
-            // AI Media Security: analyzer for audio/image/video (user-selected
-            // media only). Optional eventId opens a stored analysis result.
-            composable(
-                route = "media_scan?eventId={eventId}",
-                arguments = listOf(
-                    androidx.navigation.navArgument("eventId") {
-                        type = androidx.navigation.NavType.LongType
-                        defaultValue = -1L
-                    }
-                )
-            ) { entry ->
-                com.cybershieldai.ui.media.MediaSecurityScreen(
-                    navController,
-                    entry.arguments?.getLong("eventId") ?: -1L)
-            }
 
             // App detail: {packageName} argument (URL-encoded for the route)
             composable(
@@ -160,7 +146,6 @@ fun CyberShieldApp(initialSharedText: String? = null, startScreen: String? = nul
             // Secondary screens reachable from Home / Alerts / Settings
             composable("timeline") { TimelineScreen(navController) }
             composable("incidents") { IncidentScreen(navController) }
-            composable("report") { ReportScreen(navController) }
             composable("assistant") {
                 AssistantScreen(aiModelSettings = { navController.navigate("ai_model_settings") })
             }

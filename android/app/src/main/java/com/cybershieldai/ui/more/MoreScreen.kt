@@ -48,14 +48,10 @@ fun MoreScreen(navController: NavHostController) {
             "Every detection with its evidence, chronologically") { navController.navigate("timeline") }
         MoreLink(Icons.Filled.Build, "Incident Center",
             "Correlated security incidents with their evidence") { navController.navigate("incidents") }
-        MoreLink(Icons.Filled.Build, "Report Scam",
-            "Report a scam number, SMS or URL — stored on this device only") { navController.navigate("report") }
         MoreLink(Icons.Filled.Psychology, "AI Assistant",
             "Offline on-device chatbot — CyberShield AI") { navController.navigate("assistant") }
         MoreLink(Icons.Filled.Memory, "AI Model Settings",
             "Install or remove the on-device AI model (546 MB)") { navController.navigate("ai_model_settings") }
-        MoreLink(Icons.Filled.GraphicEq, "AI Media Security",
-            "Check audio, images and videos for AI-generation signals") { navController.navigate("media_scan") }
         MoreLink(Icons.Filled.HealthAndSafety, "Notification Diagnostics",
             "Real pipeline status, delivery trail and test notification") { navController.navigate("diagnostics") }
         MoreLink(Icons.Filled.Settings, "Settings",
@@ -63,7 +59,7 @@ fun MoreScreen(navController: NavHostController) {
 
         SectionCard {
             Text("CyberShield AI", style = CS.CardTitle, color = TextPrimary)
-            Text("Version 2.1 · Security engine v2",
+            Text("Version 2.3 · Security engine v2",
                 style = CS.Secondary, color = TextTertiary)
         }
     }

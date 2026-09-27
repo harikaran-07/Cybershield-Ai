@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PersonSearch
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Security
@@ -62,9 +61,8 @@ import kotlinx.coroutines.withContext
  * header (brand + status indicator + menu) → large circular PROTECTION SCORE
  * (real SecurityScoreEngine value; tap → Security Report) with the LIVE
  * operation under it ("Scanning: Installed apps" is literally running) →
- * [ Security Scan ] button → 2×2 security cards (AI Media Security / Threat
- * Scanner / Scam Protection / App Security, all real state) → SECURITY
- * SCANNERS grid (six real scanners) → 🚨 REPORT SCAM.
+ * [ Security Scan ] button → security cards (AI Media Security / Threat
+ * Scanner / App Security, all real state) → SECURITY SCANNERS grid.
  * No storage-cleaner / booster features. No fake data.
  */
 @Composable
@@ -183,9 +181,6 @@ fun HomeScreen(navController: NavHostController, initialSharedText: String? = nu
                         text = { Text("AI Model Settings") },
                         onClick = { menuOpen = false; navController.navigate("ai_model_settings") })
                     DropdownMenuItem(
-                        text = { Text("AI Media Security") },
-                        onClick = { menuOpen = false; navController.navigate("media_scan") })
-                    DropdownMenuItem(
                         text = { Text("Security Timeline") },
                         onClick = { menuOpen = false; navController.navigate("timeline") })
                     DropdownMenuItem(
@@ -204,7 +199,7 @@ fun HomeScreen(navController: NavHostController, initialSharedText: String? = nu
                 score = score,
                 subtitle = statusLine,
                 scanning = scanning,
-                onClick = { navController.navigate("report") })
+                onClick = { navController.navigate("reports") })
         }
 
         // ---------------- Security Scan button ----------------
@@ -252,14 +247,8 @@ fun HomeScreen(navController: NavHostController, initialSharedText: String? = nu
             }
         }
 
-        // ---------------- 2×2 feature cards (real state) ----------------
+        // ---------------- Feature cards (real state) ----------------
         Row(horizontalArrangement = Arrangement.spacedBy(Dsn.M)) {
-            HomeCard(
-                icon = Icons.Filled.GraphicEq, title = "AI Media Security",
-                modifier = Modifier.weight(1f),
-                status = "Voice · image · video checks",
-                ok = true
-            ) { navController.navigate("media_scan") }
             HomeCard(
                 icon = Icons.Filled.Security, title = "Threat Scanner",
                 modifier = Modifier.weight(1f),
@@ -307,31 +296,14 @@ fun HomeScreen(navController: NavHostController, initialSharedText: String? = nu
         Row(horizontalArrangement = Arrangement.spacedBy(Dsn.M)) {
             ScannerTile(Icons.Filled.PhoneAndroid, "Phone\nScan", Modifier.weight(1f)) {
                 navController.navigate("phonescan") }
-            ScannerTile(Icons.Filled.GraphicEq, "Media\nScanner", Modifier.weight(1f)) {
-                navController.navigate("media_scan") }
             ScannerTile(Icons.Filled.Sms, "SMS\nScanner", Modifier.weight(1f)) {
+                navController.navigate("scan") }
+            ScannerTile(Icons.Filled.Link, "Link\nScanner", Modifier.weight(1f)) {
                 navController.navigate("scan") }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(Dsn.M)) {
-            ScannerTile(Icons.Filled.Link, "Link\nScanner", Modifier.weight(1f)) {
-                navController.navigate("scan") }
-            ScannerTile(Icons.Filled.PersonSearch, "App\nScanner", Modifier.weight(1f)) {
-                navController.navigate("protection") }
             ScannerTile(Icons.Filled.AdminPanelSettings, "Permission\nScanner", Modifier.weight(1f)) {
                 navController.navigate("protection") }
-        }
-
-        // ---------------- 🚨 REPORT SCAM ----------------
-        Button(
-            onClick = { navController.navigate("report") },
-            modifier = Modifier.fillMaxWidth().height(Dsn.ButtonHeight),
-            shape = RoundedCornerShape(Dsn.ButtonCorner),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = High.copy(alpha = 0.16f), contentColor = High)
-        ) {
-            Icon(Icons.Filled.Report, contentDescription = null, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.width(Dsn.S))
-            Text("REPORT SCAM", style = CS.Button)
         }
     }
 }
